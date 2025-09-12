@@ -7,11 +7,13 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Download, Moon, Sun, Monitor, Settings, Database, Smartphone, Info, Check } from 'lucide-react';
+import { Trash2, Download, Moon, Sun, Monitor, Settings, Database, Smartphone, Info, Check, Code, RefreshCw } from 'lucide-react';
+import { OfflineStorageSettings } from './offline-storage-settings';
 import { useTheme } from 'next-themes';
 import { useReadingHistoryStore } from '@/stores/reading-history-store';
 import { useReaderStore } from '@/stores/reader-store';
 import { useSearchStore } from '@/stores/search-store';
+import { APP_VERSION, BUILD_TIME, getServiceWorkerVersion } from '@/lib/version';
 
 export function SettingsPanel() {
   const { theme, setTheme } = useTheme();
@@ -23,6 +25,8 @@ export function SettingsPanel() {
   const [isInstallable, setIsInstallable] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [swVersion, setSwVersion] = useState<string | null>(null);
+  const [swBuildTime, setSwBuildTime] = useState<string | null>(null);
 
   const historyCount = getHistory().length;
   const bookmarksCount = getBookmarks().length;
@@ -34,6 +38,14 @@ export function SettingsPanel() {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
     const isInWebAppiOS = (window.navigator as any).standalone === true;
     setIsInstalled(isStandalone || isInWebAppiOS);
+
+    // Get service worker version
+    getServiceWorkerVersion().then((versionInfo) => {
+      if (versionInfo) {
+        setSwVersion(versionInfo.version);
+        setSwBuildTime(versionInfo.buildTime);
+      }
+    });
 
     // Listen for the beforeinstallprompt event
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -257,6 +269,9 @@ export function SettingsPanel() {
         </CardContent>
       </Card>
 
+      {/* Offline Storage Settings */}
+      <OfflineStorageSettings />
+
       {/* PWA Settings */}
       <Card className="border-2 border-green-500/20">
         <CardHeader className="bg-gradient-to-r from-green-500/10 to-green-500/5">
@@ -359,22 +374,55 @@ export function SettingsPanel() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 bg-gradient-to-br from-blue-500/5 to-blue-500/10 rounded-lg border">
-              <div className="text-center">
-                <Badge variant="secondary" className="mb-2">v1.0.0</Badge>
-                <p className="text-sm font-medium">Current Version</p>
+              <div className="flex items-start gap-3">
+                <Code className="w-5 h-5 text-blue-500 mt-1" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium mb-2">App Version</p>
+                  <Badge variant="secondary" className="mb-1">v{APP_VERSION}</Badge>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Built: {new Date(BUILD_TIME).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
             </div>
             <div className="p-4 bg-gradient-to-br from-green-500/5 to-green-500/10 rounded-lg border">
-              <div className="text-center">
-                <Badge variant="secondary" className="mb-2">{historyCount + bookmarksCount}</Badge>
-                <p className="text-sm font-medium">Total Items</p>
+              <div className="flex items-start gap-3">
+                <RefreshCw className="w-5 h-5 text-green-500 mt-1" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium mb-2">Service Worker</p>
+                  {swVersion ? (
+                    <>
+                      <Badge variant="secondary" className="mb-1">v{swVersion}</Badge>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Updated: {swBuildTime ? new Date(swBuildTime).toLocaleString() : 'Unknown'}
+                      </p>
+                    </>
+                  ) : (
+                    <Badge variant="outline">Not registered</Badge>
+                  )}
+                </div>
               </div>
             </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 bg-gradient-to-br from-purple-500/5 to-purple-500/10 rounded-lg border">
               <div className="text-center">
-                <Badge variant="secondary" className="mb-2">Next.js</Badge>
+                <Badge variant="secondary" className="mb-2">{historyCount}</Badge>
+                <p className="text-sm font-medium">History Items</p>
+              </div>
+            </div>
+            <div className="p-4 bg-gradient-to-br from-pink-500/5 to-pink-500/10 rounded-lg border">
+              <div className="text-center">
+                <Badge variant="secondary" className="mb-2">{bookmarksCount}</Badge>
+                <p className="text-sm font-medium">Bookmarks</p>
+              </div>
+            </div>
+            <div className="p-4 bg-gradient-to-br from-indigo-500/5 to-indigo-500/10 rounded-lg border">
+              <div className="text-center">
+                <Badge variant="secondary" className="mb-2">Next.js 15</Badge>
                 <p className="text-sm font-medium">Framework</p>
               </div>
             </div>

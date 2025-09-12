@@ -10,11 +10,24 @@ import { useReadingHistoryStore } from '@/stores/reading-history-store';
 import type { MangaNode } from '@/types/manga';
 
 interface MangaDetailsProps {
-  manga: MangaNode;
+  manga: MangaNode | null;
 }
 
 export function MangaDetails({ manga }: MangaDetailsProps) {
   const { toggleBookmark, isBookmarked } = useReadingHistoryStore();
+  
+  if (!manga || !manga.data) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-center text-muted-foreground">
+            Unable to load manga details
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+  
   const { id, data } = manga;
 
   const handleBookmarkToggle = () => {

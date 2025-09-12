@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, History, Settings, Menu, X, Home, Heart } from 'lucide-react';
+import { Search, History, Settings, Menu, X, Home, Heart, Download, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { NotificationButton } from '@/components/notifications/notification-button';
+import { OfflineIndicator } from '@/components/ui/offline-indicator';
 import { cn } from '@/lib/utils';
 
 export function Header() {
@@ -17,6 +18,8 @@ export function Header() {
     { name: 'Home', href: '/', icon: Home },
     { name: 'History', href: '/history', icon: History },
     { name: 'Bookmarks', href: '/bookmarks', icon: Heart },
+    { name: 'Downloads', href: '/downloads', icon: Download },
+    { name: 'Offline Library', href: '/offline-library', icon: BookOpen },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
@@ -32,12 +35,12 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
+          <nav className="hidden lg:flex items-center space-x-4">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="flex items-center space-x-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className="flex items-center space-x-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
               >
                 <item.icon className="w-4 h-4" />
                 <span>{item.name}</span>
@@ -47,6 +50,7 @@ export function Header() {
 
           {/* Right side controls */}
           <div className="flex items-center space-x-2">
+            <OfflineIndicator />
             <NotificationButton />
             <ThemeToggle />
             
@@ -54,7 +58,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden"
+              className="lg:hidden"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? (
@@ -69,8 +73,8 @@ export function Header() {
         {/* Mobile Navigation */}
         <div
           className={cn(
-            "md:hidden overflow-hidden transition-all duration-200 ease-in-out",
-            mobileMenuOpen ? "max-h-48 opacity-100" : "max-h-0 opacity-0"
+            "lg:hidden overflow-hidden transition-all duration-200 ease-in-out",
+            mobileMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
           )}
         >
           <nav className="py-4 space-y-2">

@@ -6,6 +6,7 @@ import { Calendar, FileText, Play, ArrowUpDown, CheckCircle2, Clock } from 'luci
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { DownloadButton, BulkDownloadButton } from '@/components/ui/download-button';
 import { formatDate } from '@/lib/utils';
 import { useReadingHistoryStore } from '@/stores/reading-history-store';
 import type { ChapterNode } from '@/types/manga';
@@ -14,12 +15,13 @@ interface ChapterListProps {
   chapters: ChapterNode[];
   mangaSlug: string;
   mangaId: string;
+  mangaName?: string;
 }
 
 type SortKey = 'number' | 'date';
 type SortOrder = 'asc' | 'desc';
 
-export function ChapterList({ chapters, mangaSlug, mangaId }: ChapterListProps) {
+export function ChapterList({ chapters, mangaSlug, mangaId, mangaName }: ChapterListProps) {
   const { getReadingProgress } = useReadingHistoryStore();
   const [sortKey, setSortKey] = useState<SortKey>('number');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
@@ -71,32 +73,43 @@ export function ChapterList({ chapters, mangaSlug, mangaId }: ChapterListProps) 
   return (
     <Card>
       <CardHeader className="pb-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
-          <CardTitle className="flex items-center gap-2 flex-shrink-0">
-            <FileText className="w-5 h-5" />
-            Chapters ({chapters.length})
-          </CardTitle>
-          
-          <div className="flex gap-1 sm:gap-2 w-full sm:w-auto">
-            <Button
-              variant={sortKey === 'number' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleSort('number')}
-              className="gap-1 text-xs flex-1 sm:flex-none min-w-0 px-2 sm:px-3"
-            >
-              <ArrowUpDown className="w-3 h-3 flex-shrink-0" />
-              <span className="truncate">{sortKey === 'number' ? (sortOrder === 'asc' ? 'Ch. ↑' : 'Ch. ↓') : 'Ch.'}</span>
-            </Button>
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
+            <CardTitle className="flex items-center gap-2 flex-shrink-0">
+              <FileText className="w-5 h-5" />
+              Chapters ({chapters.length})
+            </CardTitle>
             
-            <Button
-              variant={sortKey === 'date' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleSort('date')}
-              className="gap-1 text-xs flex-1 sm:flex-none min-w-0 px-2 sm:px-3"
-            >
-              <ArrowUpDown className="w-3 h-3 flex-shrink-0" />
-              <span className="truncate">{sortKey === 'date' ? (sortOrder === 'asc' ? 'Date ↑' : 'Date ↓') : 'Date'}</span>
-            </Button>
+            <div className="flex gap-1 sm:gap-2 w-full sm:w-auto">
+              <Button
+                variant={sortKey === 'number' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => handleSort('number')}
+                className="gap-1 text-xs flex-1 sm:flex-none min-w-0 px-2 sm:px-3"
+              >
+                <ArrowUpDown className="w-3 h-3 flex-shrink-0" />
+                <span className="truncate">{sortKey === 'number' ? (sortOrder === 'asc' ? 'Ch. ↑' : 'Ch. ↓') : 'Ch.'}</span>
+              </Button>
+              
+              <Button
+                variant={sortKey === 'date' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => handleSort('date')}
+                className="gap-1 text-xs flex-1 sm:flex-none min-w-0 px-2 sm:px-3"
+              >
+                <ArrowUpDown className="w-3 h-3 flex-shrink-0" />
+                <span className="truncate">{sortKey === 'date' ? (sortOrder === 'asc' ? 'Date ↑' : 'Date ↓') : 'Date'}</span>
+              </Button>
+            </div>
+          </div>
+          
+          {/* Bulk download button */}
+          <div className="flex justify-end">
+            <BulkDownloadButton 
+              chapters={chapters.map(ch => ({ mangaId, chapterId: ch.id }))}
+              mangaName={mangaName}
+              className="text-xs"
+            />
           </div>
         </div>
       </CardHeader>
@@ -142,6 +155,13 @@ export function ChapterList({ chapters, mangaSlug, mangaId }: ChapterListProps) 
                           {Math.round((progress.currentPage / progress.totalPages) * 100)}%
                         </Badge>
                       )}
+                      <DownloadButton
+                        mangaId={mangaId}
+                        chapterId={chapter.id}
+                        mangaName={mangaName}
+                        variant="badge"
+                        className="ml-2"
+                      />
                     </div>
                     
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
