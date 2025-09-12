@@ -2,6 +2,9 @@ import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/providers/theme-provider';
+import { ServiceWorkerProvider } from '@/components/providers/service-worker-provider';
+import { OfflineStateProvider } from '@/components/providers/offline-state-provider';
+import { InstallPrompt } from '@/components/pwa/install-prompt';
 import { Toaster } from '@/components/ui/toaster';
 import { ScrollRestoration } from '@/components/layout/scroll-restoration';
 import { ChapterUpdateChecker } from '@/components/notifications/chapter-update-checker';
@@ -38,9 +41,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.svg" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="MangainAja" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="application-name" content="MangainAja" />
       </head>
       <body className={inter.className}>
         <ThemeProvider
@@ -49,11 +56,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div id="root">
-            {children}
-          </div>
-          <ChapterUpdateChecker />
-          <Toaster />
+          <OfflineStateProvider>
+            <ServiceWorkerProvider />
+            <div id="root">
+              {children}
+            </div>
+            <InstallPrompt />
+            <ChapterUpdateChecker />
+            <Toaster />
+          </OfflineStateProvider>
         </ThemeProvider>
       </body>
     </html>
