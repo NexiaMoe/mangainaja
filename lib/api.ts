@@ -16,6 +16,9 @@ async function executeGraphQL<T>(query: string, variables?: Record<string, any>)
   }
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
     const response = await fetch(GRAPHQL_ENDPOINT, {
       method: 'POST',
       headers: {
@@ -25,7 +28,10 @@ async function executeGraphQL<T>(query: string, variables?: Record<string, any>)
         query,
         variables,
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -40,6 +46,17 @@ async function executeGraphQL<T>(query: string, variables?: Record<string, any>)
     return result.data;
   } catch (error) {
     console.error('GraphQL request failed:', error);
+    
+    // Handle specific network errors
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Request timeout - please check your connection');
+      }
+      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        throw new Error('Network error - please check your internet connection');
+      }
+    }
+    
     throw error instanceof Error ? error : new Error('Unknown error occurred');
   }
 }

@@ -2,6 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { getMangaDetails } from '@/lib/api';
 import { useReadingHistoryStore } from '@/stores/reading-history-store';
 import { useNotificationStore } from '@/stores/notification-store';
+import { useOnlineStatus } from '@/hooks/use-online-status';
 import type { ChapterNode } from '@/types/manga';
 
 interface UseChapterUpdatesOptions {
@@ -13,10 +14,18 @@ export function useChapterUpdates(options: UseChapterUpdatesOptions = {}) {
   const { enabled = true, checkInterval = 300000 } = options; // Default: 5 minutes
   const { getBookmarks } = useReadingHistoryStore();
   const { addNotification } = useNotificationStore();
+  const isOnline = useOnlineStatus();
 
   const checkForUpdates = useCallback(async () => {
+    // Skip update checking when offline
+    if (!isOnline) {
+      console.log('Offline detected, skipping chapter update checks');
+      return;
+    }
+
     try {
       const bookmarks = getBookmarks();
+      console.log('Checking for chapter updates for', bookmarks.length, 'bookmarks');
       
       for (const bookmark of bookmarks) {
         try {
@@ -46,19 +55,19 @@ export function useChapterUpdates(options: UseChapterUpdatesOptions = {}) {
     } catch (error) {
       console.error('Failed to check for chapter updates:', error);
     }
-  }, [getBookmarks, addNotification]);
+  }, [getBookmarks, addNotification, isOnline]);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || !isOnline) return;
 
-    // Initial check
+    // Initial check (only when online)
     checkForUpdates();
 
     // Set up interval for periodic checks
     const interval = setInterval(checkForUpdates, checkInterval);
 
     return () => clearInterval(interval);
-  }, [enabled, checkInterval, checkForUpdates]);
+  }, [enabled, checkInterval, checkForUpdates, isOnline]);
 
   return { checkForUpdates };
 }
