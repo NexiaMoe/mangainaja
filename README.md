@@ -20,9 +20,10 @@ A modern, fast, and beautiful manga reading web application built with Next.js 1
 - **Responsive Design** - Perfect experience on desktop, tablet, and mobile
 
 ### 📱 PWA Features
-- **Offline Capability** - Cache recently viewed content
+- **Offline Reading** - Download chapters for offline access
+- **Smart Caching** - Images and content cached automatically
 - **Native App Feel** - Full-screen experience when installed
-- **Fast Loading** - Optimized performance with smart caching
+- **Fast Loading** - Optimized performance with intelligent caching
 - **Cross-Platform** - Works on iOS, Android, Windows, macOS, and Linux
 
 ### 🎨 UI/UX Features
@@ -143,15 +144,15 @@ This application requires a compatible GraphQL API that supports:
 
 ## 🎯 Roadmap
 
-### Phase 1: Enhanced Caching ⏳
-- [ ] Improved offline content caching
-- [ ] Smart cache management
-- [ ] Storage usage monitoring
+### Phase 1: Enhanced Caching ✅ Completed
+- [x] Improved offline content caching
+- [x] Smart cache management
+- [x] Storage usage monitoring
 
-### Phase 2: Download System 📅 Planned
-- [ ] Selective chapter downloads
-- [ ] Download queue management
-- [ ] Offline library interface
+### Phase 2: Download System ✅ Completed
+- [x] Selective chapter downloads
+- [x] Download queue management
+- [x] Offline library interface
 
 ### Phase 3: Advanced Features 🔮 Future
 - [ ] Background synchronization
@@ -192,9 +193,21 @@ Contributions are welcome! Please read our contributing guidelines:
 
 ## 🐛 Known Issues
 
-- Hydration warnings on theme switching (cosmetic only)
-- Service worker cache management needs optimization
+### Platform-Specific Issues
+
+#### iPad/iOS Image Caching (iOS Safari Limitation)
+**Issue**: On iPad/iPhone, only some manga images may cache during downloads, requiring internet connection for missing images.
+
+**Cause**: iOS Safari has aggressive memory management and service worker limitations that affect PWA caching.
+
+**Status**: This is an iOS platform limitation, not an app bug. Android and desktop work perfectly.
+
+**Workaround**: Download chapters while having a stable internet connection and avoid switching apps during downloads.
+
+### General Issues
+- Hydration warnings on theme switching (cosmetic only)  
 - Large manga libraries may impact performance
+- All data is saved on the device, no cross-device sync yet
 
 ## 📄 License
 
