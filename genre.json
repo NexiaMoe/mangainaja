@@ -1,0 +1,662 @@
+{
+  "mangaTypes": {
+    "artbook": {
+      "file": "artbook",
+      "text": "Artbook",
+      "sort": 1
+    },
+    "cartoon": {
+      "file": "cartoon",
+      "text": "Cartoon",
+      "sort": 1
+    },
+    "comic": {
+      "file": "comic",
+      "text": "Comic",
+      "sort": 1
+    },
+    "doujinshi": {
+      "file": "doujinshi",
+      "text": "Doujinshi",
+      "sort": 1
+    },
+    "imageset": {
+      "file": "imageset",
+      "text": "Imageset",
+      "sort": 1
+    },
+    "manga": {
+      "file": "manga",
+      "text": "Manga",
+      "sort": 1
+    },
+    "manhua": {
+      "file": "manhua",
+      "text": "Manhua",
+      "sort": 1
+    },
+    "manhwa": {
+      "file": "manhwa",
+      "text": "Manhwa",
+      "sort": 1
+    },
+    "webtoon": {
+      "file": "webtoon",
+      "text": "Webtoon",
+      "sort": 1
+    },
+    "western": {
+      "file": "western",
+      "text": "Western",
+      "sort": 1
+    },
+    "_4_koma": {
+      "file": "_4_koma",
+      "text": "4-Koma",
+      "sort": 1
+    },
+    "oneshot": {
+      "file": "oneshot",
+      "text": "Oneshot",
+      "sort": 1
+    }
+  },
+  "demographics": {
+    "shoujo": {
+      "file": "shoujo",
+      "text": "Shoujo(G)",
+      "sort": 2,
+      "tips": "For young teenage girls, roughly between 12-18."
+    },
+    "shounen": {
+      "file": "shounen",
+      "text": "Shounen(B)",
+      "sort": 2,
+      "tips": "For young teenage boys, roughly between 12-18."
+    },
+    "josei": {
+      "file": "josei",
+      "text": "Josei(W)",
+      "sort": 2,
+      "tips": "For adult females or younger women, roughly between 18-40."
+    },
+    "seinen": {
+      "file": "seinen",
+      "text": "Seinen(M)",
+      "sort": 2,
+      "tips": "For young adult males or younger men, roughly between 18-40."
+    },
+    "yuri": {
+      "file": "yuri",
+      "text": "Yuri(GL)",
+      "sort": 2,
+      "tips": "A form of manga involving two or more females in a homosexual relationship."
+    },
+    "yaoi": {
+      "file": "yaoi",
+      "text": "Yaoi(BL)",
+      "sort": 2,
+      "tips": "A form of manga involving two or more males in a homosexual relationship."
+    },
+    "bara": {
+      "file": "bara",
+      "text": "Bara(ML)",
+      "sort": 2,
+      "tips": "Written by gay men and primarily intended for gay men."
+    },
+    "kodomo": {
+      "file": "kodomo",
+      "text": "Kodomo(Kid)",
+      "sort": 2,
+      "tips": "For little kids or young children, under about 8."
+    },
+    "old_people": {
+      "file": "old_people",
+      "text": "Silver & Golden",
+      "sort": 2,
+      "tips": "Manga for older readers."
+    },
+    "non_human": {
+      "file": "non_human",
+      "text": "Non-human",
+      "sort": 2,
+      "tips": "Manga not about humans."
+    },
+    "shoujo_ai": {
+      "file": "shoujo_ai",
+      "text": "Shoujo ai",
+      "sort": 0,
+      "tips": "A narrative or visual work featuring a romance or non-sexual relationship between two or more females."
+    },
+    "shounen_ai": {
+      "file": "shounen_ai",
+      "text": "Shounen ai",
+      "sort": 0,
+      "tips": "A narrative or visual work featuring a romance or non-sexual relationship between two or more males, primarily intended for a female audience."
+    }
+  },
+  "genres": {
+    "action": {
+      "file": "action",
+      "text": "Action",
+      "sort": 0
+    },
+    "adaptation": {
+      "file": "adaptation",
+      "text": "Adaptation",
+      "sort": 0
+    },
+    "adventure": {
+      "file": "adventure",
+      "text": "Adventure",
+      "sort": 0
+    },
+    "age_gap": {
+      "file": "age_gap",
+      "text": "Age Gap",
+      "sort": 0
+    },
+    "aliens": {
+      "file": "aliens",
+      "text": "Aliens",
+      "sort": 0
+    },
+    "animals": {
+      "file": "animals",
+      "text": "Animals",
+      "sort": 0
+    },
+    "anthology": {
+      "file": "anthology",
+      "text": "Anthology",
+      "sort": 0
+    },
+    "beasts": {
+      "file": "beasts",
+      "text": "Beasts",
+      "sort": 0
+    },
+    "bodyswap": {
+      "file": "bodyswap",
+      "text": "Bodyswap",
+      "sort": 0
+    },
+    "boys": {
+      "file": "boys",
+      "text": "Boys",
+      "sort": 0
+    },
+    "cars": {
+      "file": "cars",
+      "text": "Cars",
+      "sort": 0
+    },
+    "cheating_infidelity": {
+      "file": "cheating_infidelity",
+      "text": "Cheating/Infidelity",
+      "sort": 0
+    },
+    "childhood_friends": {
+      "file": "childhood_friends",
+      "text": "Childhood Friends",
+      "sort": 0
+    },
+    "college_life": {
+      "file": "college_life",
+      "text": "College life",
+      "sort": 0
+    },
+    "comedy": {
+      "file": "comedy",
+      "text": "Comedy",
+      "sort": 0
+    },
+    "contest_winning": {
+      "file": "contest_winning",
+      "text": "Contest winning",
+      "sort": 0
+    },
+    "cooking": {
+      "file": "cooking",
+      "text": "Cooking",
+      "sort": 0
+    },
+    "crime": {
+      "file": "crime",
+      "text": "Crime",
+      "sort": 0
+    },
+    "crossdressing": {
+      "file": "crossdressing",
+      "text": "Crossdressing",
+      "sort": 0
+    },
+    "delinquents": {
+      "file": "delinquents",
+      "text": "Delinquents",
+      "sort": 0
+    },
+    "dementia": {
+      "file": "dementia",
+      "text": "Dementia",
+      "sort": 0
+    },
+    "demons": {
+      "file": "demons",
+      "text": "Demons",
+      "sort": 0
+    },
+    "drama": {
+      "file": "drama",
+      "text": "Drama",
+      "sort": 0
+    },
+    "dungeons": {
+      "file": "dungeons",
+      "text": "Dungeons",
+      "sort": 0
+    },
+    "emperor_daughte": {
+      "file": "emperor_daughte",
+      "text": "Emperor's daughte",
+      "sort": 0
+    },
+    "fantasy": {
+      "file": "fantasy",
+      "text": "Fantasy",
+      "sort": 0
+    },
+    "fan_colored": {
+      "file": "fan_colored",
+      "text": "Fan-Colored",
+      "sort": 0
+    },
+    "fetish": {
+      "file": "fetish",
+      "text": "Fetish",
+      "sort": 0
+    },
+    "full_color": {
+      "file": "full_color",
+      "text": "Full Color",
+      "sort": 0
+    },
+    "game": {
+      "file": "game",
+      "text": "Game",
+      "sort": 0
+    },
+    "gender_bender": {
+      "file": "gender_bender",
+      "text": "Gender Bender",
+      "sort": 0
+    },
+    "genderswap": {
+      "file": "genderswap",
+      "text": "Genderswap",
+      "sort": 0
+    },
+    "ghosts": {
+      "file": "ghosts",
+      "text": "Ghosts",
+      "sort": 0
+    },
+    "girls": {
+      "file": "girls",
+      "text": "Girls",
+      "sort": 0
+    },
+    "gyaru": {
+      "file": "gyaru",
+      "text": "Gyaru",
+      "sort": 0
+    },
+    "harem": {
+      "file": "harem",
+      "text": "Harem",
+      "sort": 0
+    },
+    "harlequin": {
+      "file": "harlequin",
+      "text": "Harlequin",
+      "sort": 0
+    },
+    "historical": {
+      "file": "historical",
+      "text": "Historical",
+      "sort": 0
+    },
+    "horror": {
+      "file": "horror",
+      "text": "Horror",
+      "sort": 0
+    },
+    "incest": {
+      "file": "incest",
+      "text": "Incest",
+      "sort": 0
+    },
+    "isekai": {
+      "file": "isekai",
+      "text": "Isekai",
+      "sort": 0
+    },
+    "kids": {
+      "file": "kids",
+      "text": "Kids",
+      "sort": 0
+    },
+    "magic": {
+      "file": "magic",
+      "text": "Magic",
+      "sort": 0
+    },
+    "magical_girls": {
+      "file": "magical_girls",
+      "text": "Magical Girls",
+      "sort": 0
+    },
+    "martial_arts": {
+      "file": "martial_arts",
+      "text": "Martial Arts",
+      "sort": 0
+    },
+    "mecha": {
+      "file": "mecha",
+      "text": "Mecha",
+      "sort": 0
+    },
+    "medical": {
+      "file": "medical",
+      "text": "Medical",
+      "sort": 0
+    },
+    "military": {
+      "file": "military",
+      "text": "Military",
+      "sort": 0
+    },
+    "monster_girls": {
+      "file": "monster_girls",
+      "text": "Monster Girls",
+      "sort": 0
+    },
+    "monsters": {
+      "file": "monsters",
+      "text": "Monsters",
+      "sort": 0
+    },
+    "music": {
+      "file": "music",
+      "text": "Music",
+      "sort": 0
+    },
+    "mystery": {
+      "file": "mystery",
+      "text": "Mystery",
+      "sort": 0
+    },
+    "netorare": {
+      "file": "netorare",
+      "text": "Netorare/NTR",
+      "sort": 0
+    },
+    "ninja": {
+      "file": "ninja",
+      "text": "Ninja",
+      "sort": 0
+    },
+    "office_workers": {
+      "file": "office_workers",
+      "text": "Office Workers",
+      "sort": 0
+    },
+    "omegaverse": {
+      "file": "omegaverse",
+      "text": "Omegaverse",
+      "sort": 0
+    },
+    "parody": {
+      "file": "parody",
+      "text": "Parody",
+      "sort": 0
+    },
+    "philosophical": {
+      "file": "philosophical",
+      "text": "Philosophical",
+      "sort": 0
+    },
+    "police": {
+      "file": "police",
+      "text": "Police",
+      "sort": 0
+    },
+    "post_apocalyptic": {
+      "file": "post_apocalyptic",
+      "text": "Post-Apocalyptic",
+      "sort": 0
+    },
+    "psychological": {
+      "file": "psychological",
+      "text": "Psychological",
+      "sort": 0
+    },
+    "regression": {
+      "file": "regression",
+      "text": "Regression",
+      "sort": 0
+    },
+    "reincarnation": {
+      "file": "reincarnation",
+      "text": "Reincarnation",
+      "sort": 0
+    },
+    "reverse_harem": {
+      "file": "reverse_harem",
+      "text": "Reverse Harem",
+      "sort": 0
+    },
+    "revenge": {
+      "file": "revenge",
+      "text": "Revenge",
+      "sort": 0
+    },
+    "reverse_isekai": {
+      "file": "reverse_isekai",
+      "text": "Reverse Isekai",
+      "sort": 0
+    },
+    "romance": {
+      "file": "romance",
+      "text": "Romance",
+      "sort": 0
+    },
+    "royal_family": {
+      "file": "royal_family",
+      "text": "Royal family",
+      "sort": 0
+    },
+    "royalty": {
+      "file": "royalty",
+      "text": "Royalty",
+      "sort": 0
+    },
+    "samurai": {
+      "file": "samurai",
+      "text": "Samurai",
+      "sort": 0
+    },
+    "school_life": {
+      "file": "school_life",
+      "text": "School Life",
+      "sort": 0
+    },
+    "sci_fi": {
+      "file": "sci_fi",
+      "text": "Sci-Fi",
+      "sort": 0
+    },
+    "showbiz": {
+      "file": "showbiz",
+      "text": "Showbiz",
+      "sort": 0
+    },
+    "slice_of_life": {
+      "file": "slice_of_life",
+      "text": "Slice of Life",
+      "sort": 0
+    },
+    "sm_bdsm": {
+      "file": "sm_bdsm",
+      "text": "SM/BDSM/SUB-DOM",
+      "sort": 0
+    },
+    "space": {
+      "file": "space",
+      "text": "Space",
+      "sort": 0
+    },
+    "sports": {
+      "file": "sports",
+      "text": "Sports",
+      "sort": 0
+    },
+    "super_power": {
+      "file": "super_power",
+      "text": "Super Power",
+      "sort": 0
+    },
+    "superhero": {
+      "file": "superhero",
+      "text": "Superhero",
+      "sort": 0
+    },
+    "supernatural": {
+      "file": "supernatural",
+      "text": "Supernatural",
+      "sort": 0
+    },
+    "survival": {
+      "file": "survival",
+      "text": "Survival",
+      "sort": 0
+    },
+    "thriller": {
+      "file": "thriller",
+      "text": "Thriller",
+      "sort": 0
+    },
+    "time_travel": {
+      "file": "time_travel",
+      "text": "Time Travel",
+      "sort": 0
+    },
+    "tower_climbing": {
+      "file": "tower_climbing",
+      "text": "Tower Climbing",
+      "sort": 0
+    },
+    "traditional_games": {
+      "file": "traditional_games",
+      "text": "Traditional Games",
+      "sort": 0
+    },
+    "tragedy": {
+      "file": "tragedy",
+      "text": "Tragedy",
+      "sort": 0
+    },
+    "transmigration": {
+      "file": "transmigration",
+      "text": "Transmigration",
+      "sort": 0
+    },
+    "vampires": {
+      "file": "vampires",
+      "text": "Vampires",
+      "sort": 0
+    },
+    "villainess": {
+      "file": "villainess",
+      "text": "Villainess",
+      "sort": 0
+    },
+    "video_games": {
+      "file": "video_games",
+      "text": "Video Games",
+      "sort": 0
+    },
+    "virtual_reality": {
+      "file": "virtual_reality",
+      "text": "Virtual Reality",
+      "sort": 0
+    },
+    "wuxia": {
+      "file": "wuxia",
+      "text": "Wuxia",
+      "sort": 0
+    },
+    "xianxia": {
+      "file": "xianxia",
+      "text": "Xianxia",
+      "sort": 0
+    },
+    "xuanhuan": {
+      "file": "xuanhuan",
+      "text": "Xuanhuan",
+      "sort": 0
+    },
+    "yakuzas": {
+      "file": "yakuzas",
+      "text": "Yakuzas",
+      "sort": 0
+    },
+    "zombies": {
+      "file": "zombies",
+      "text": "Zombies",
+      "sort": 0
+    }
+  },
+  "other": {
+    "gore": {
+      "file": "gore",
+      "text": "Gore",
+      "sort": 3
+    },
+    "bloody": {
+      "file": "bloody",
+      "text": "Bloody",
+      "sort": 3
+    },
+    "violence": {
+      "file": "violence",
+      "text": "Violence",
+      "sort": 3
+    },
+    "ecchi": {
+      "file": "ecchi",
+      "text": "Ecchi",
+      "sort": 3
+    },
+    "adult": {
+      "file": "adult",
+      "text": "Adult",
+      "sort": 3
+    },
+    "mature": {
+      "file": "mature",
+      "text": "Mature",
+      "sort": 3
+    },
+    "smut": {
+      "file": "smut",
+      "text": "Smut",
+      "sort": 3
+    },
+    "hentai": {
+      "file": "hentai",
+      "text": "Hentai",
+      "sort": 3
+    }
+  }
+}

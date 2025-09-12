@@ -1,0 +1,115 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { Header } from '@/components/layout/header';
+import { SearchBar } from '@/components/search/search-bar';
+import { GenreFilter } from '@/components/search/genre-filter';
+import { MangaGrid } from '@/components/manga/manga-grid';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { useMangaSearch } from '@/hooks/use-manga-search';
+import { useSearchStore } from '@/stores/search-store';
+import { usePaginationStore } from '@/stores/pagination-store';
+import { useHomeScrollPosition } from '@/hooks/use-home-scroll-position';
+import { usePathname } from 'next/navigation';
+
+export default function HomePage() {
+  const { searchTerm, selectedGenres, sortBy } = useSearchStore();
+  const { currentPage, setCurrentPage, resetPage } = usePaginationStore();
+  const { restoreScrollPosition } = useHomeScrollPosition();
+  const pathname = usePathname();
+  
+  // Track previous search parameters to detect intentional changes
+  const prevSearchParams = useRef({ searchTerm, selectedGenres, sortBy });
+  const isInitialMount = useRef(true);
+  
+  const {
+    data: searchResults,
+    loading,
+    error,
+    hasMore,
+    totalPages
+  } = useMangaSearch({
+    searchTerm: searchTerm || undefined,
+    genres: selectedGenres,
+    sortBy,
+    page: currentPage,
+  });
+
+  useEffect(() => {
+    // Skip effect on initial mount to preserve persisted pagination state
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    
+    // Only reset page if search parameters actually changed (intentional search)
+    const currentParams = { searchTerm, selectedGenres, sortBy };
+    const prevParams = prevSearchParams.current;
+    
+    const hasSearchTermChanged = searchTerm !== prevParams.searchTerm;
+    const hasGenresChanged = JSON.stringify(selectedGenres) !== JSON.stringify(prevParams.selectedGenres);
+    const hasSortByChanged = sortBy !== prevParams.sortBy;
+    
+    if (hasSearchTermChanged || hasGenresChanged || hasSortByChanged) {
+      resetPage();
+      // Update previous parameters
+      prevSearchParams.current = currentParams;
+    }
+  }, [searchTerm, selectedGenres, sortBy, resetPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top when changing page
+    window.scrollTo(0, 0);
+  };
+
+  // Restore scroll position when component mounts
+  useEffect(() => {
+    restoreScrollPosition();
+  }, [restoreScrollPosition]);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      <main
+        className="container mx-auto px-4 py-6 space-y-6"
+      >
+        {/* Search Section */}
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <SearchBar />
+            </div>
+          </div>
+          <GenreFilter />
+        </div>
+
+        {/* Results Section */}
+        <div className="space-y-6">
+          {loading && currentPage === 1 ? (
+            <div className="flex justify-center py-12">
+              <LoadingSpinner size="large" />
+            </div>
+          ) : (
+            <>
+              <MangaGrid
+                manga={searchResults}
+                currentPage={currentPage}
+                totalPages={totalPages || 1}
+                onPageChange={handlePageChange}
+                loading={loading}
+              />
+              
+              {error && (
+                <div className="text-center py-8">
+                  <p className="text-destructive">Error loading manga: {error}</p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
