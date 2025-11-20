@@ -4,6 +4,7 @@ import { persist } from 'zustand/middleware';
 export type ReadingDirection = 'ltr' | 'rtl';
 export type PageTransition = 'slide' | 'fade' | 'none';
 export type NavigationMethod = 'click' | 'keyboard' | 'both';
+export type FitMode = 'screen' | 'width';
 
 interface ReaderStore {
   // Reading state
@@ -17,6 +18,7 @@ interface ReaderStore {
   autoHideControls: boolean;
   preloadPages: number;
   imageQuality: 'low' | 'medium' | 'high';
+  fitMode: FitMode;
   
   // Actions
   setCurrentPage: (page: number) => void;
@@ -27,6 +29,7 @@ interface ReaderStore {
   setAutoHideControls: (autoHide: boolean) => void;
   setPreloadPages: (count: number) => void;
   setImageQuality: (quality: 'low' | 'medium' | 'high') => void;
+  setFitMode: (mode: FitMode) => void;
   resetReaderSettings: () => void;
 }
 
@@ -37,6 +40,7 @@ const defaultSettings = {
   autoHideControls: true,
   preloadPages: 3,
   imageQuality: 'high' as const,
+  fitMode: 'screen' as FitMode,
 };
 
 export const useReaderStore = create<ReaderStore>()(
@@ -58,6 +62,7 @@ export const useReaderStore = create<ReaderStore>()(
       setAutoHideControls: (autoHide) => set({ autoHideControls: autoHide }),
       setPreloadPages: (count) => set({ preloadPages: count }),
       setImageQuality: (quality) => set({ imageQuality: quality }),
+      setFitMode: (mode) => set({ fitMode: mode }),
       resetReaderSettings: () => set(defaultSettings),
     }),
     {
@@ -70,6 +75,7 @@ export const useReaderStore = create<ReaderStore>()(
         autoHideControls: state.autoHideControls,
         preloadPages: state.preloadPages,
         imageQuality: state.imageQuality,
+        fitMode: state.fitMode,
       }),
     }
   )

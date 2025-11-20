@@ -5,6 +5,7 @@ import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useReaderStore } from '@/stores/reader-store';
 import type { ReadingDirection, PageTransition } from '@/stores/reader-store';
 import type { ChapterNode } from '@/types/manga';
 
@@ -36,6 +37,7 @@ function ReaderPagesComponent({
   prevChapter,
   onPrevChapter,
 }: ReaderPagesProps) {
+  const { fitMode } = useReaderStore();
   const [imageLoading, setImageLoading] = useState<Record<number, boolean>>({});
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
   const [imageDecoded, setImageDecoded] = useState<Record<number, boolean>>({});
@@ -46,6 +48,13 @@ function ReaderPagesComponent({
 
   const currentImage = images[currentPage - 1];
   const [visibleImage, setVisibleImage] = useState<string>(currentImage);
+
+  // Reset scroll position when fit mode changes or page changes in width mode
+  useEffect(() => {
+    if (containerRef.current && fitMode === 'width') {
+      containerRef.current.scrollTop = 0;
+    }
+  }, [fitMode, currentPage]);
 
   // Handle smooth page transitions
   useEffect(() => {
@@ -244,7 +253,10 @@ function ReaderPagesComponent({
       {/* Main Reader Content */}
       <div
         ref={containerRef}
-        className="relative w-full h-full flex items-center justify-center cursor-pointer"
+        className={cn(
+          "relative w-full h-full cursor-pointer",
+          fitMode === 'screen' ? "flex items-center justify-center" : "overflow-y-auto overflow-x-hidden"
+        )}
         onClick={handleClick}
       >
         {/* Loading indicator */}
@@ -286,13 +298,15 @@ function ReaderPagesComponent({
             src={visibleImage}
             alt={`Page ${currentPage}`}
             className={cn(
-              "w-full h-full object-contain",
-              // Desktop: fit to viewport while maintaining aspect ratio
-              "max-w-[100vw] max-h-[100vh] mx-auto",
-              // Mobile: full width with proper scaling
-              "sm:max-w-none sm:h-[100vh] sm:object-cover sm:object-center",
               "opacity-100 transition-opacity duration-200",
-              imageDecoded[currentPage] && 'animate-blur-up'
+              imageDecoded[currentPage] && 'animate-blur-up',
+              fitMode === 'screen' ? [
+                "w-full h-full object-contain",
+                "max-w-[100vw] max-h-[100vh] mx-auto"
+              ] : [
+                "w-screen object-top",
+                "max-h-none"
+              ]
             )}
             loading={currentPage <= 2 ? "eager" : "lazy"}
             onLoad={() => handleImageLoad(currentPage)}

@@ -1,10 +1,11 @@
 'use client';
 
 import { memo, useMemo, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, Settings, ArrowLeft } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Settings, ArrowLeft, Maximize2, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
+import { useReaderStore } from '@/stores/reader-store';
 import type { ChapterNode } from '@/types/manga';
 
 interface ReaderControlsProps {
@@ -30,6 +31,8 @@ function ReaderControlsComponent({
   onExit,
   chapter,
 }: ReaderControlsProps) {
+  const { fitMode, setFitMode } = useReaderStore();
+  
   const pageDisplay = useMemo(
     () => `Page ${currentPage} of ${totalPages}`,
     [currentPage, totalPages]
@@ -38,6 +41,10 @@ function ReaderControlsComponent({
   const handleSliderChange = useCallback(([value]: number[]) => {
     onPageChange(value);
   }, [onPageChange]);
+
+  const handleToggleFitMode = useCallback(() => {
+    setFitMode(fitMode === 'screen' ? 'width' : 'screen');
+  }, [fitMode, setFitMode]);
 
   return (
     <div
@@ -65,14 +72,31 @@ function ReaderControlsComponent({
             </p>
           </div>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggleSettings}
-            className="text-white hover:bg-white/30 hover:shadow-lg active:shadow-md active:scale-95 transition-all duration-150"
-          >
-            <Settings className="w-5 h-5" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleToggleFitMode}
+              className="text-white hover:bg-white/30 hover:shadow-lg active:shadow-md active:scale-95 transition-all duration-150"
+              aria-label={fitMode === 'screen' ? 'Switch to Fit to Width' : 'Switch to Fit to Screen'}
+              title={fitMode === 'screen' ? 'Fit to Width' : 'Fit to Screen'}
+            >
+              {fitMode === 'screen' ? (
+                <Maximize2 className="w-5 h-5" />
+              ) : (
+                <Minimize2 className="w-5 h-5" />
+              )}
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onToggleSettings}
+              className="text-white hover:bg-white/30 hover:shadow-lg active:shadow-md active:scale-95 transition-all duration-150"
+            >
+              <Settings className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
       </div>
 
