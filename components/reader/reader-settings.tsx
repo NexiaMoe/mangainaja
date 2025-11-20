@@ -1,5 +1,6 @@
 'use client';
 
+import { memo, useCallback } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -25,7 +26,7 @@ interface ReaderSettingsProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function ReaderSettings({ open, onOpenChange }: ReaderSettingsProps) {
+function ReaderSettingsComponent({ open, onOpenChange }: ReaderSettingsProps) {
   const {
     readingDirection,
     pageTransition,
@@ -42,6 +43,30 @@ export function ReaderSettings({ open, onOpenChange }: ReaderSettingsProps) {
     resetReaderSettings,
   } = useReaderStore();
 
+  const handleReadingDirectionChange = useCallback((value: ReadingDirection) => {
+    setReadingDirection(value);
+  }, [setReadingDirection]);
+
+  const handlePageTransitionChange = useCallback((value: PageTransition) => {
+    setPageTransition(value);
+  }, [setPageTransition]);
+
+  const handleNavigationMethodChange = useCallback((value: NavigationMethod) => {
+    setNavigationMethod(value);
+  }, [setNavigationMethod]);
+
+  const handleAutoHideChange = useCallback((checked: boolean) => {
+    setAutoHideControls(checked);
+  }, [setAutoHideControls]);
+
+  const handleImageQualityChange = useCallback((value: 'low' | 'medium' | 'high') => {
+    setImageQuality(value);
+  }, [setImageQuality]);
+
+  const handlePreloadPagesChange = useCallback(([value]: number[]) => {
+    setPreloadPages(value);
+  }, [setPreloadPages]);
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-80 bg-black text-white border-gray-800">
@@ -55,7 +80,7 @@ export function ReaderSettings({ open, onOpenChange }: ReaderSettingsProps) {
             <Label htmlFor="reading-direction">Reading Direction</Label>
             <Select
               value={readingDirection}
-              onValueChange={(value: ReadingDirection) => setReadingDirection(value)}
+              onValueChange={handleReadingDirectionChange}
             >
               <SelectTrigger className="bg-gray-900 border-gray-700">
                 <SelectValue />
@@ -72,7 +97,7 @@ export function ReaderSettings({ open, onOpenChange }: ReaderSettingsProps) {
             <Label htmlFor="page-transition">Page Transition</Label>
             <Select
               value={pageTransition}
-              onValueChange={(value: PageTransition) => setPageTransition(value)}
+              onValueChange={handlePageTransitionChange}
             >
               <SelectTrigger className="bg-gray-900 border-gray-700">
                 <SelectValue />
@@ -90,7 +115,7 @@ export function ReaderSettings({ open, onOpenChange }: ReaderSettingsProps) {
             <Label htmlFor="navigation-method">Navigation Method</Label>
             <Select
               value={navigationMethod}
-              onValueChange={(value: NavigationMethod) => setNavigationMethod(value)}
+              onValueChange={handleNavigationMethodChange}
             >
               <SelectTrigger className="bg-gray-900 border-gray-700">
                 <SelectValue />
@@ -109,7 +134,7 @@ export function ReaderSettings({ open, onOpenChange }: ReaderSettingsProps) {
             <Switch
               id="auto-hide-controls"
               checked={autoHideControls}
-              onCheckedChange={setAutoHideControls}
+              onCheckedChange={handleAutoHideChange}
             />
           </div>
 
@@ -118,7 +143,7 @@ export function ReaderSettings({ open, onOpenChange }: ReaderSettingsProps) {
             <Label htmlFor="image-quality">Image Quality</Label>
             <Select
               value={imageQuality}
-              onValueChange={(value: 'low' | 'medium' | 'high') => setImageQuality(value)}
+              onValueChange={handleImageQualityChange}
             >
               <SelectTrigger className="bg-gray-900 border-gray-700">
                 <SelectValue />
@@ -143,7 +168,7 @@ export function ReaderSettings({ open, onOpenChange }: ReaderSettingsProps) {
               max={10}
               step={1}
               value={[preloadPages]}
-              onValueChange={([value]) => setPreloadPages(value)}
+              onValueChange={handlePreloadPagesChange}
               className="w-full"
             />
           </div>
@@ -173,3 +198,5 @@ export function ReaderSettings({ open, onOpenChange }: ReaderSettingsProps) {
     </Sheet>
   );
 }
+
+export const ReaderSettings = memo(ReaderSettingsComponent);

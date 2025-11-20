@@ -15,10 +15,15 @@ export function LoadingSpinner({ size = 'medium', className }: LoadingSpinnerPro
   return (
     <div
       className={cn(
-        'animate-spin rounded-full border-2 border-muted border-t-primary',
+        'animate-spin-gpu rounded-full border-2 border-muted border-t-primary',
+        'will-change-transform transform-gpu',
         sizeClasses[size],
         className
       )}
+      style={{
+        backfaceVisibility: 'hidden',
+        perspective: 1000,
+      }}
     />
   );
 }

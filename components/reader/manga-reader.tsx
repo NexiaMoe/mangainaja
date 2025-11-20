@@ -25,7 +25,6 @@ export function MangaReader({ chapter, chapters, manga, mangaId, chapterId }: Ma
     setCurrentPage,
     readingDirection,
     pageTransition,
-    navigationMethod,
     showControls,
     setShowControls
   } = useReaderStore();
@@ -104,20 +103,17 @@ export function MangaReader({ chapter, chapters, manga, mangaId, chapterId }: Ma
 
   const navigateToNextChapter = useCallback(() => {
     if (nextChapter) {
-      // Use replace instead of push to avoid adding to history stack
       router.replace(`/read/${mangaId}/${nextChapter.id}`);
     }
   }, [nextChapter, mangaId, router]);
 
   const navigateToPrevChapter = useCallback(() => {
     if (prevChapter) {
-      // Use replace instead of push to avoid adding to history stack
       router.replace(`/read/${mangaId}/${prevChapter.id}`);
     }
   }, [prevChapter, mangaId, router]);
 
   const exitReader = useCallback(() => {
-    // Navigate directly to manga details page instead of using browser back
     router.push(`/manga/${mangaId}`);
   }, [router, mangaId]);
 
@@ -155,14 +151,15 @@ export function MangaReader({ chapter, chapters, manga, mangaId, chapterId }: Ma
       if (side === 'left') prevPage();
       else nextPage();
     }
-    
-    // Don't show controls on navigation - only center click should toggle UI
   }, [readingDirection, nextPage, prevPage]);
 
   const handleCenterClick = useCallback(() => {
-    // Toggle controls only on center click
     setShowControls(!showControls);
   }, [showControls, setShowControls]);
+
+  const handleToggleSettings = useCallback(() => {
+    setShowSettings(prev => !prev);
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-black text-white overflow-hidden">
@@ -190,7 +187,7 @@ export function MangaReader({ chapter, chapters, manga, mangaId, chapterId }: Ma
         onPageChange={navigateToPage}
         onPrevPage={prevPage}
         onNextPage={nextPage}
-        onToggleSettings={() => setShowSettings(!showSettings)}
+        onToggleSettings={handleToggleSettings}
         onExit={exitReader}
         chapter={chapter}
       />
