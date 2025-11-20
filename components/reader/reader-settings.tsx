@@ -19,7 +19,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { useReaderStore } from '@/stores/reader-store';
-import type { ReadingDirection, PageTransition, NavigationMethod } from '@/stores/reader-store';
+import type { ReadingDirection, PageTransition, NavigationMethod, FitMode } from '@/stores/reader-store';
 
 interface ReaderSettingsProps {
   open: boolean;
@@ -34,12 +34,14 @@ function ReaderSettingsComponent({ open, onOpenChange }: ReaderSettingsProps) {
     autoHideControls,
     preloadPages,
     imageQuality,
+    fitMode,
     setReadingDirection,
     setPageTransition,
     setNavigationMethod,
     setAutoHideControls,
     setPreloadPages,
     setImageQuality,
+    setFitMode,
     resetReaderSettings,
   } = useReaderStore();
 
@@ -66,6 +68,10 @@ function ReaderSettingsComponent({ open, onOpenChange }: ReaderSettingsProps) {
   const handlePreloadPagesChange = useCallback(([value]: number[]) => {
     setPreloadPages(value);
   }, [setPreloadPages]);
+
+  const handleFitModeChange = useCallback((value: FitMode) => {
+    setFitMode(value);
+  }, [setFitMode]);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -126,6 +132,26 @@ function ReaderSettingsComponent({ open, onOpenChange }: ReaderSettingsProps) {
                 <SelectItem value="both">Both</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Fit Mode */}
+          <div className="space-y-2">
+            <Label htmlFor="fit-mode">Image Fit</Label>
+            <Select
+              value={fitMode}
+              onValueChange={handleFitModeChange}
+            >
+              <SelectTrigger className="bg-gray-900 border-gray-700">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-gray-900 border-gray-700">
+                <SelectItem value="screen">Fit to Screen</SelectItem>
+                <SelectItem value="width">Fit to Width</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-gray-400">
+              Fit to Screen: Contains entire image within viewport. Fit to Width: Full width with scroll for tall images.
+            </p>
           </div>
 
           {/* Auto Hide Controls */}
