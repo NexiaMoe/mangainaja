@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
-import Link from 'next/link';
+import { memo, useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Button } from '@/components/ui/button';
@@ -15,7 +14,7 @@ interface ReaderPagesProps {
   totalPages: number;
   onPageClick: (side: 'left' | 'right') => void;
   onCenterClick?: () => void;
-  onPageChange: (page: number) => void;
+  onPageChange?: (page: number) => void;
   readingDirection: ReadingDirection;
   pageTransition: PageTransition;
   nextChapter?: ChapterNode;
@@ -24,13 +23,12 @@ interface ReaderPagesProps {
   onPrevChapter?: () => void;
 }
 
-export function ReaderPages({
+function ReaderPagesComponent({
   images,
   currentPage,
   totalPages,
   onPageClick,
   onCenterClick,
-  onPageChange,
   readingDirection,
   pageTransition,
   nextChapter,
@@ -40,8 +38,11 @@ export function ReaderPages({
 }: ReaderPagesProps) {
   const [imageLoading, setImageLoading] = useState<Record<number, boolean>>({});
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
+  const [imageDecoded, setImageDecoded] = useState<Record<number, boolean>>({});
   const preloadedImages = useRef<Record<string, HTMLImageElement>>({});
   const containerRef = useRef<HTMLDivElement>(null);
+  const preloadAbortControllers = useRef<Record<string, AbortController>>({});
+  const maxCacheSize = useRef(20);
 
   const currentImage = images[currentPage - 1];
   const [visibleImage, setVisibleImage] = useState<string>(currentImage);
@@ -62,20 +63,20 @@ export function ReaderPages({
     }
   }, [currentImage, visibleImage]);
 
+  // Optimize preloading with bounded cache
   useEffect(() => {
-    // Conservative preloading - load only 2 pages before, current, and 2 pages after (total 5 max)
     const maxPreload = 5;
     const preloadRange = 2; // 2 pages before/after current
     const preloadIndices = new Set<number>();
-    
+
     // Always preload current page
     if (currentPage >= 1 && currentPage <= totalPages) {
       preloadIndices.add(currentPage - 1);
     }
-    
+
     // Preload nearby pages (limit total to maxPreload)
     const nearbyPages = [];
-    
+
     // Previous pages (up to preloadRange)
     for (let i = 1; i <= preloadRange && nearbyPages.length < maxPreload; i++) {
       const pageIndex = currentPage - i - 1;
@@ -83,7 +84,7 @@ export function ReaderPages({
         nearbyPages.push(pageIndex);
       }
     }
-    
+
     // Next pages (up to preloadRange)
     for (let i = 1; i <= preloadRange && nearbyPages.length < maxPreload; i++) {
       const pageIndex = currentPage + i - 1;
@@ -91,29 +92,66 @@ export function ReaderPages({
         nearbyPages.push(pageIndex);
       }
     }
-    
+
     // Add nearby pages if we haven't reached maxPreload
     nearbyPages.slice(0, maxPreload - preloadIndices.size).forEach(index => {
       preloadIndices.add(index);
+    });
+
+    // Cancel preloads for pages no longer needed
+    Object.keys(preloadAbortControllers.current).forEach(url => {
+      const pageIndex = images.indexOf(url);
+      if (pageIndex === -1 || !preloadIndices.has(pageIndex)) {
+        preloadAbortControllers.current[url].abort();
+        delete preloadAbortControllers.current[url];
+      }
     });
 
     // Preload images
     preloadIndices.forEach(index => {
       const pageNum = index + 1;
       if (images[index] && !preloadedImages.current[images[index]] && !imageErrors[pageNum]) {
+        // Create abort controller for this preload
+        if (!preloadAbortControllers.current[images[index]]) {
+          preloadAbortControllers.current[images[index]] = new AbortController();
+        }
+
         const img = new window.Image();
         img.onload = () => {
           preloadedImages.current[images[index]] = img;
           setImageLoading(prev => ({ ...prev, [pageNum]: false }));
+          setImageDecoded(prev => ({ ...prev, [pageNum]: true }));
+
+          // Maintain bounded cache size
+          const cacheSize = Object.keys(preloadedImages.current).length;
+          if (cacheSize > maxCacheSize.current) {
+            // Remove oldest entries (simple FIFO)
+            const keys = Object.keys(preloadedImages.current);
+            delete preloadedImages.current[keys[0]];
+          }
         };
         img.onerror = () => {
           setImageErrors(prev => ({ ...prev, [pageNum]: true }));
           setImageLoading(prev => ({ ...prev, [pageNum]: false }));
         };
+
+        img.onabort = () => {
+          setImageLoading(prev => ({ ...prev, [pageNum]: false }));
+        };
+
         img.src = images[index];
+        setImageLoading(prev => ({ ...prev, [pageNum]: true }));
       }
     });
-  }, [currentPage, images, totalPages]);
+
+    // Cleanup - capture the controllers to avoid ref change warning
+    const controllersToAbort = { ...preloadAbortControllers.current };
+    return () => {
+      Object.values(controllersToAbort).forEach(controller => {
+        controller.abort();
+      });
+    };
+  }, [currentPage, images, totalPages, imageErrors]);
 
   const handleClick = useCallback((event: React.MouseEvent) => {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -121,11 +159,11 @@ export function ReaderPages({
 
     const x = event.clientX - rect.left;
     const width = rect.width;
-    
+
     // Three zones: left 33%, center 34%, right 33%
-    const leftZoneEnd = width * (1/3);
-    const rightZoneStart = width * (2/3);
-    
+    const leftZoneEnd = width * (1 / 3);
+    const rightZoneStart = width * (2 / 3);
+
     if (x < leftZoneEnd) {
       // Left zone - previous page (no UI toggle)
       onPageClick('left');
@@ -149,6 +187,11 @@ export function ReaderPages({
     setImageLoading(prev => ({ ...prev, [page]: false }));
   }, []);
 
+  // Memoize the shimmer placeholder
+  const ShimmerPlaceholder = useMemo(() => (
+    <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 animate-shimmer" />
+  ), []);
+
   if (!currentImage) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -164,7 +207,7 @@ export function ReaderPages({
 
   // Show next chapter button when on last page and next chapter exists
   const showNextChapterButton = currentPage === totalPages && nextChapter && onNextChapter;
-  
+
   // Show previous chapter button when on first page and previous chapter exists
   const showPrevChapterButton = currentPage === 1 && prevChapter && onPrevChapter;
 
@@ -189,7 +232,7 @@ export function ReaderPages({
                 }
               }}
               size="sm"
-              className="bg-secondary/90 hover:bg-secondary text-secondary-foreground px-4 py-2 rounded-md shadow-lg transition-all duration-200 hover:scale-105 touch-manipulation select-none text-sm"
+              className="bg-secondary/90 hover:bg-secondary text-secondary-foreground px-4 py-2 rounded-md shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 touch-manipulation select-none text-sm"
             >
               <ChevronLeft className="w-4 h-4 mr-1" />
               Prev: {prevChapter.data.dname.length > 20 ? prevChapter.data.dname.substring(0, 20) + '...' : prevChapter.data.dname}
@@ -231,6 +274,13 @@ export function ReaderPages({
             pageTransition === 'slide' && 'transition-transform duration-300 ease-in-out'
           )}
         >
+          {/* Shimmer placeholder while image is loading */}
+          {imageLoading[currentPage] && !imageErrors[currentPage] && (
+            <div className="absolute inset-0 max-w-[100vw] max-h-[100vh]">
+              {ShimmerPlaceholder}
+            </div>
+          )}
+
           <img
             key={`image-${visibleImage}`}
             src={visibleImage}
@@ -241,14 +291,17 @@ export function ReaderPages({
               "max-w-[100vw] max-h-[100vh] mx-auto",
               // Mobile: full width with proper scaling
               "sm:max-w-none sm:h-[100vh] sm:object-cover sm:object-center",
-              "opacity-100 transition-opacity duration-200"
+              "opacity-100 transition-opacity duration-200",
+              imageDecoded[currentPage] && 'animate-blur-up'
             )}
             loading={currentPage <= 2 ? "eager" : "lazy"}
             onLoad={() => handleImageLoad(currentPage)}
             onError={() => handleImageError(currentPage)}
             style={{
               transform: readingDirection === 'rtl' ? 'scaleX(-1)' : 'none',
+              willChange: 'opacity',
             }}
+            fetchPriority={currentPage <= 2 ? 'high' : 'low'}
           />
         </div>
 
@@ -282,7 +335,7 @@ export function ReaderPages({
                 }
               }}
               size="sm"
-              className="bg-primary/90 hover:bg-primary text-primary-foreground px-4 py-2 rounded-md shadow-lg transition-all duration-200 hover:scale-105 touch-manipulation select-none text-sm"
+              className="bg-primary/90 hover:bg-primary text-primary-foreground px-4 py-2 rounded-md shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 touch-manipulation select-none text-sm"
             >
               Next: {nextChapter.data.dname.length > 20 ? nextChapter.data.dname.substring(0, 20) + '...' : nextChapter.data.dname}
               <ChevronRight className="w-4 h-4 ml-1" />
@@ -293,3 +346,5 @@ export function ReaderPages({
     </div>
   );
 }
+
+export const ReaderPages = memo(ReaderPagesComponent);

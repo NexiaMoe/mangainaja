@@ -1,6 +1,7 @@
 'use client';
 
-import { ChevronLeft, ChevronRight, Settings, X, ArrowLeft } from 'lucide-react';
+import { memo, useMemo, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, Settings, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
@@ -18,7 +19,7 @@ interface ReaderControlsProps {
   chapter: ChapterNode;
 }
 
-export function ReaderControls({
+function ReaderControlsComponent({
   visible,
   currentPage,
   totalPages,
@@ -29,37 +30,46 @@ export function ReaderControls({
   onExit,
   chapter,
 }: ReaderControlsProps) {
+  const pageDisplay = useMemo(
+    () => `Page ${currentPage} of ${totalPages}`,
+    [currentPage, totalPages]
+  );
+
+  const handleSliderChange = useCallback(([value]: number[]) => {
+    onPageChange(value);
+  }, [onPageChange]);
+
   return (
     <div
       className={cn(
-        'absolute inset-0 pointer-events-none transition-opacity duration-300',
-        visible ? 'opacity-100' : 'opacity-0'
+        'reader-overlay absolute inset-0 pointer-events-none',
+        visible ? 'opacity-100' : 'opacity-0 pointer-events-none'
       )}
     >
       {/* Top Bar */}
-      <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent p-4 pointer-events-auto">
+      <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/90 via-black/70 to-transparent p-4 pointer-events-auto animate-slide-up">
         <div className="flex items-center justify-between text-white">
           <Button
             variant="ghost"
             size="icon"
             onClick={onExit}
-            className="text-white hover:bg-white/20"
+            className="text-white hover:bg-white/30 hover:shadow-lg active:shadow-md active:scale-95 transition-all duration-150"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          
+
           <div className="flex-1 text-center">
-            <h1 className="text-lg font-semibold truncate">{chapter.data.dname}</h1>
-            <p className="text-sm text-white/70">
-              Page {currentPage} of {totalPages}
+            <h1 className="text-base font-semibold truncate tracking-tight">{chapter.data.dname}</h1>
+            <p className="text-xs text-white/60 tracking-wide mt-0.5">
+              {pageDisplay}
             </p>
           </div>
-          
+
           <Button
             variant="ghost"
             size="icon"
             onClick={onToggleSettings}
-            className="text-white hover:bg-white/20"
+            className="text-white hover:bg-white/30 hover:shadow-lg active:shadow-md active:scale-95 transition-all duration-150"
           >
             <Settings className="w-5 h-5" />
           </Button>
@@ -67,39 +77,39 @@ export function ReaderControls({
       </div>
 
       {/* Bottom Controls */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 pointer-events-auto">
-        <div className="flex items-center gap-4 text-white">
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-4 pointer-events-auto animate-slide-up" style={{ animationDelay: '0.05s' }}>
+        <div className="flex items-center gap-2 text-white">
           <Button
             variant="ghost"
             size="icon"
             onClick={onPrevPage}
             disabled={currentPage <= 1}
-            className="text-white hover:bg-white/20 disabled:opacity-50"
+            className="text-white hover:bg-white/30 hover:shadow-lg active:shadow-md active:scale-95 transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="w-5 h-5" />
           </Button>
-          
+
           <div className="flex-1 space-y-2">
             <Slider
               value={[currentPage]}
               min={1}
               max={totalPages}
               step={1}
-              onValueChange={([value]) => onPageChange(value)}
+              onValueChange={handleSliderChange}
               className="w-full"
             />
-            <div className="flex justify-between text-xs text-white/70">
+            <div className="flex justify-between text-xs text-white/50 tracking-wide">
               <span>1</span>
               <span>{totalPages}</span>
             </div>
           </div>
-          
+
           <Button
             variant="ghost"
             size="icon"
             onClick={onNextPage}
             disabled={currentPage >= totalPages}
-            className="text-white hover:bg-white/20 disabled:opacity-50"
+            className="text-white hover:bg-white/30 hover:shadow-lg active:shadow-md active:scale-95 transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ChevronRight className="w-5 h-5" />
           </Button>
@@ -108,3 +118,5 @@ export function ReaderControls({
     </div>
   );
 }
+
+export const ReaderControls = memo(ReaderControlsComponent);
